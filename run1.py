@@ -1,0 +1,1 @@
+print(f"\nThis is a new game")
