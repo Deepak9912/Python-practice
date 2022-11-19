@@ -1,3 +1,6 @@
+"""
+Battleship game using oop
+"""
 import random
 
 class GameBoard:
