@@ -1,10 +1,12 @@
 """
 Battleship game using functions
 """
-import random
+from random import randint
 
-computer_input = [[" "] * 8 for x in range(8)]
-user_input = [[" "] * 8 for i in range(8)]
+#Board for holding ship locations
+HIDDEN_BOARD = [[" "] * 8 for x in range(8)]
+# Board for displaying hits and misses
+GUESS_BOARD = [[" "] * 8 for i in range(8)]
 
 def printBoard(board):
 
@@ -27,24 +29,25 @@ letters_to_numbers = {
 }
 
 def create_ships(board):
-    for i in range(5):
-        ship.row, ship.column = random.randint(0, 7), random.randint(0, 7)
+    for ship in range(5):
+        ship_row, ship_column = randint(0,7), randint(0,7)
         while board[ship_row][ship_column] == "X":
             ship_row, ship_column = get_ship_location()
         board[ship_row][ship_column] = "X"
 
 def get_ship_location():
     row = input("Enter a row of the ship: ")
-    while row not in "1 2 3 4 5 6 7":
+    while row not in "12345678":
         print("wrong input, please try again")
-        row = input("Enter a row again ")
+        row = input("Enter a row again ").upper()
     
     column = input("Enter a column of the ship: ")
-    while column not in "A B C D E F G H":
+    while column not in "ABCDEFGH":
         print("wrong input, please try again ")
-        column = input("Enter a row again ")
+        column = input("Enter a row again ").upper()
+    return int(row) - 1, letters_to_numbers[column] 
 
-def count_hit_ships():
+def count_hit_ships(board):
     hit_ships = 0
     for row in board:
         for column in row:
@@ -52,29 +55,27 @@ def count_hit_ships():
                 hit_ships += 1
     return hit_ships
 
-def gameRun():
+
+if __name__ == "__main__":
+    create_ships(HIDDEN_BOARD)
     turns = 10
     while turns > 0:
-        print("Guess the battleship location")
-        printBoard(user_input)
+        print('Guess a battleship location')
+        printBoard(GUESS_BOARD)
         row, column = get_ship_location()
-        if computer_input[row][column] == "-":
-            print("You already guessed that")
-        elif user_input[row][column] == "X":
-            print("success!")
-            computer_input[row][column] == "X"
-            turns -= 1
+        if GUESS_BOARD[row][column] == "-":
+            print("You guessed that one already.")
+        elif HIDDEN_BOARD[row][column] == "X":
+            print("Hit")
+            GUESS_BOARD[row][column] = "X" 
+            turns -= 1  
         else:
-            print("try again!")
-            computer_input[row][column] = "-"
-            turns -1
-        
-        if count_hit_ships(computer_board) == 5:
-            print("you win")
+            print("MISS!")
+            GUESS_BOARD[row][column] = "-"   
+            turns -= 1     
+        if count_hit_ships(GUESS_BOARD) == 5:
+            print("You win!")
             break
-        print("you have " + str(turns) + " turns left")
-        
+        print("You have " + str(turns) + " turns left")
         if turns == 0:
-            print("you ran out of turns")
-
-gameRun()
+            print("You ran out of turns")
